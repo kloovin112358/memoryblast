@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/base :: head"></head>
+
+<body class='bg-warning'>
+    <div class='container'>
+        <p class='display-3 mt-5' id='typedText'></p>
+        <!-- <div class='mt-4' id='formDiv'> -->
+        <div class='mt-4' id='formDiv' style='visibility:hidden;'>
+            <div class='card shadow'>
+                <div class='card-body'>
+                    <!-- loop through the first 5, then the second 5 integers -->
+
+                    <div class="row">
+                        <div class="col-sm" th:each="num: ${first5}">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control form-control-lg" step="1" th:id="${num}">
+                                <label th:text="${'Integer ' + num}"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm" th:each="num: ${second5}">
+                            <div class="form-floating mb-3">
+                                <input type="number" class="form-control form-control-lg" step="1" th:id="${num}">
+                                <label th:text="${'Integer ' + num}"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <button class='mt-3 btn btn-lg shadow btn-dark' style='visibility:hidden;' id='continueBtn'>Continue</button>
+    </div>
+</body>
+
+<div th:insert="fragments/base :: js"></div>
+<script>
+var app = document.getElementById('typedText');
+
+function showForm() {
+    $('#formDiv').css('visibility','visible').hide().fadeIn(3000);
+}
+
+var typewriter = new Typewriter(app, {
+    loop: false,
+    delay: 75,
+});
+
+typewriter
+    .pauseFor(500)
+    .typeString('Start by adding 10 unique integers.')
+    .pauseFor(1500)
+    .callFunction(showForm)
+    .start();
+
+// we link each input to a value
+var inputVals = {};
+
+// we need to validate that the numbers are integers
+$('input').focusout(function() {
+    $(this).removeClass('is-valid').removeClass('is-invalid')
+    var storedValue = parseInt($(this).val(),10)
+    if (storedValue) {
+        if (Number.isInteger(storedValue)) {
+            // check for duplicates
+            if (!(Object.values(inputVals).includes(storedValue))) {
+                $(this).addClass('is-valid')
+                inputVals[$(this).attr('id')] = storedValue
+            } else {
+                $(this).addClass('is-invalid')
+                delete inputVals[$(this).attr('id')]
+            }
+        } else {
+            $(this).addClass('is-invalid')
+            delete inputVals[$(this).attr('id')]
+        }
+    } else {
+        if ($(this).attr('id') in inputVals) {
+            delete inputVals[$(this).attr('id')]
+        }
+    }
+    // check if all 10 are validated
+    if (Object.keys(inputVals).length == 10) {
+        $('#continueBtn').css('visibility','visible').hide().fadeIn(3000);
+    }
+})
+
+$('#continueBtn').on('click', function() {
+    // we need to check that the input values are still good
+
+})
+
+</script>
+
+</html>

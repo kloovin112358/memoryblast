@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/base :: head"></head>
+
+<body class="bg-warning">
+    <div class='container'>
+        <p class='display-1 mt-5' id='typedText'></p>
+        <a class='btn btn-lg btn-light' style='visibility:hidden;' id='beginBtn' href='/start'>Begin</a>
+    </div>
+</body>
+
+<div th:insert="fragments/base :: js"></div>
+
+<script>
+var app = document.getElementById('typedText');
+
+function showBeginBtn() {
+    $('#beginBtn').css('visibility','visible').hide().fadeIn(3000);
+}
+
+var typewriter = new Typewriter(app, {
+    loop: false,
+    delay: 75,
+});
+
+typewriter
+    .pauseFor(500)
+    .typeString('Hello.')
+    .pauseFor(1500)
+    .typeString(" A little birdie told me that you have a good memory.")
+    .pauseFor(1500)
+    .typeString("<br><br>")
+    .pauseFor(200)
+    .typeString("<span class='text-light'> We'll see about that.</span>")
+    .pauseFor(1000)
+    .callFunction(showBeginBtn)
+    .start();
+
+</script>
+
+</html>
