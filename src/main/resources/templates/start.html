@@ -88,9 +88,18 @@ $('input').focusout(function() {
     }
 })
 
-$('#continueBtn').on('click', function() {
-    // we need to check that the input values are still good
+// source: https://stackoverflow.com/a/111545
+function encodeQueryData(data) {
+   const ret = [];
+   for (let d in data)
+     ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
+   return ret.join('&');
+}
 
+$('#continueBtn').on('click', function() {
+    // construct the URL with integers
+    var intsList = Object.keys(inputVals)
+    location.href = '/game?ints=' + intsList.join(',')
 })
 
 </script>
