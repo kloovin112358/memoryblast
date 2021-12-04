@@ -1,13 +1,171 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:insert="fragments/base :: head"></head>
-
+<style>
+#cont2 p {
+   margin-top:5rem; 
+}
+#reorder {
+    cursor:pointer;
+}
+</style>
 <body class="bg-warning">
-    <div class='container'>
-        dogs dogs dogs
+    <!-- initial text -->
+    <div class='container' id='cont1'>
+        <p class='display-1 mt-5' id='typedText'></p>
+        <button class='btn btn-lg btn-light mt-3' style='visibility:hidden;' id='beginBtn'>Begin</button>
+    </div>
+    <!-- number display -->
+    <div class='container text-center d-none' id='cont2'>
+        <p class='display-1 d-none text-primary'>3...</p>
+        <p class='display-1 d-none text-primary'>2...</p>
+        <p class='display-1 d-none text-primary'>1...</p>
+        <p th:each="num: ${randomInts}" class='display-1 d-none randomized' th:text="${num}"></p>
+    </div>
+
+    <!-- collect user input -->
+    <div class='container d-none' style='visibility:hidden' id='cont3'>
+        <div class='pb-5'>
+        <p class='display-4 mt-5'>Drag to reorder the integers into the order they flashed on screen.</p>
+        <div class='card mt-5 shadow' style='width:20rem;'>
+            <ul class='list-group list-group-flush' id='reorder'>
+                <li class="list-group-item h5" th:each="num: ${sortedInts}" th:text="${num}"></li>
+            </ul>
+        </div>
+        <button class='btn btn-lg btn-dark mt-3' id='submitBtn'>Submit</button>
+        </div>
+    </div>
+
+    <!-- final results -->
+    <div class='container d-none' id='cont4'>
+        <div class='pb-5'>
+            <p class='display-1 mt-5' id='resultsText'></p>
+            <div id='resultsCards' style='visibility:hidden;'>
+            <div class='row mt-5' >
+                <div class='col'>
+                    <div class='card shadow'>
+                        <div class='card-header'>Actual Order</div>
+                        <ul class='list-group list-group-flush'>
+                            <li class="list-group-item h5" th:each="num: ${randomInts}" th:text="${num}"></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class='col'>
+                    <div class='card shadow'>
+                        <div class='card-header'>Your Order</div>
+                        <ul class='list-group list-group-flush' id='yourOrder'>
+                            
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <a class='btn btn-lg btn-dark mt-3' href='/start'>Play Again</a>
+            </div>
+        </div>
     </div>
 </body>
 
 <div th:insert="fragments/base :: js"></div>
+<!-- JQuery UI, for sorting interface -->
+<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js" integrity="sha256-hlKLmzaRlE8SCJC1Kw8zoUbU8BxA+8kR3gseuKfMjxA=" crossorigin="anonymous"></script>
+
+<script>
+$(function() {
+    $("#reorder").sortable();
+});
+
+var app = document.getElementById('typedText');
+
+function showBeginBtn() {
+    $('#beginBtn').css('visibility','visible').hide().fadeIn(3000);
+}
+
+$('#beginBtn').on('click', function() {
+    showInts()
+})
+
+$('#submitBtn').on('click', function() {
+    showResults()
+})
+
+var typewriter = new Typewriter(app, {
+    loop: false,
+    delay: 75,
+});
+
+typewriter
+    .pauseFor(500)
+    .typeString('Those numbers will be flashed on screen in a random order.')
+    .pauseFor(1000)
+    .typeString(' See how well you can remember them. ')
+    .pauseFor(1500)
+    .typeString("<span class='text-light'>Ready?</span>")
+    .callFunction(showBeginBtn)
+    .start();
+
+async function showInts() {
+    $('#cont1').addClass('d-none')
+    $('#cont2').removeClass('d-none')
+    var textToFlash = $('#cont2').children('p')
+    // we want to loop through each element in the cont2 div, show it, then hide it after a delay
+    for (var i = 0; i < textToFlash.length; i++) {
+        $(textToFlash[i]).removeClass('d-none')
+        await new Promise(r => setTimeout(r, 1000));
+        $(textToFlash[i]).addClass('d-none')
+    }
+    await new Promise(r => setTimeout(r, 2000));
+    $('#cont2').addClass('d-none')
+    $('#cont3').removeClass('d-none').css('visibility','visible').hide().fadeIn(3000);
+}
+
+function showResultsCards() {
+    $('#resultsCards').css('visibility','visible').hide().fadeIn(3000);
+}
+
+function showResults() {
+    // compare the user input to the actual randomized values
+    
+    // parse randomized
+    var randomizedList = []
+    $('.randomized').each(function() {
+        randomizedList.push($(this).html())
+    })
+    var accuracy = 100
+    var inputList = []
+    $('#reorder .list-group-item').each(function() {
+        inputList.push($(this).html())
+        $('#yourOrder').append(
+            `<li class="list-group-item h5">${$(this).html()}</li>`
+        )
+    })
+
+    for (var i = 0; i < randomizedList.length; i++) {
+        if (randomizedList[i] != inputList[i]) {
+            accuracy -= 10
+        }
+    }
+
+    $('#cont3').addClass('d-none')
+    $('#cont4').removeClass('d-none')
+
+    var typewriter2 = new Typewriter(document.getElementById('resultsText'), {
+        loop: false,
+        delay: 75,
+    });
+
+    typewriter2
+        .pauseFor(500)
+        .typeString('Let\'s see how you did...')
+        .pauseFor(1500)
+        .typeString("<br>")
+        .pauseFor(200)
+        .typeString("Your accuracy was: ")
+        .pauseFor(1500)
+        .typeString("<span class='text-light'>" + accuracy+ "%</span>")
+        .callFunction(showResultsCards)
+        .start();
+}
+
+</script>
 
 </html>

@@ -98,7 +98,7 @@ function encodeQueryData(data) {
 
 $('#continueBtn').on('click', function() {
     // construct the URL with integers
-    var intsList = Object.keys(inputVals)
+    var intsList = $.map(inputVals, function(value, key) { return value });
     location.href = '/game?ints=' + intsList.join(',')
 })
 

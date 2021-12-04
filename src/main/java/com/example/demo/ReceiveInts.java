@@ -62,6 +62,10 @@ public class ReceiveInts {
         model.addAttribute("sortedInts", sortedInts);
         model.addAttribute("randomInts", randomInts);
 
+		// these are for the same purpose as those in startgame
+		model.addAttribute("first5", new int[]{1, 2, 3, 4, 5});
+        model.addAttribute("second5", new int[]{6, 7, 8, 9, 10});
+
 		return "ints";
 	}
 
