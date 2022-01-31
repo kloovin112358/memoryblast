@@ -3,4 +3,4 @@ Small web app created for my data structures course. Takes in a set of integers 
 
 Built on [Spring Boot](https://spring.io/projects/spring-boot), using [Bootstrap 5](https://getbootstrap.com/) and [TypewriterJS](https://github.com/tameemsafi/typewriterjs). Hosted on [Heroku](https://www.heroku.com/).
 
-Live as of 12/27/21 at https://infinite-brook-88375.herokuapp.com/.
+Live at https://memory-blast.herokuapp.com/.
